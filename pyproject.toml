@@ -29,6 +29,11 @@ dependencies = [
     "scipp>=25.11.0",
 ]
 
+[dependency-groups]
+dev = [
+    "maturin_import_hook",
+]
+
 [project.optional-dependencies]
 test = [
     "pytest>=7.0",
@@ -101,3 +106,26 @@ ignore-words-list = [
     "socio-economic",
 ]
 skip = "./.git,*/.virtual_documents,*/.ipynb_checkpoints,*.pdf,*.svg,*.csv"
+
+[tool.pixi.workspace]
+channels = ["conda-forge"]
+platforms = [
+    "linux-64",
+    "osx-arm64",
+    # Scipp does not support older OSX versions.
+    { platform="osx-64", macos="14.0" },
+    "win-64"
+]
+exclude-newer = "14d"
+
+[tool.pixi.pypi-exclude-newer]
+scipp = "0m"
+
+[tool.pixi.pypi-dependencies]
+scippneutron_algorithms = { path = ".", editable = true }
+
+[tool.pixi.environments]
+default = { features = ["dev"], solve-group = "default" }
+
+[tool.pixi.activation]
+scripts = ["tools/install_maturin_hook.sh"]
