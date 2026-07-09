@@ -1,0 +1,103 @@
+[build-system]
+requires = ["maturin>=1.13,<2.0"]
+build-backend = "maturin"
+
+[project]
+name = "scippneutron_algorithms"
+description = "Optimized and compile algorithms for ScippNeutron"
+authors = [{ name = "Scipp contributors" }]
+license = "BSD-3-Clause"
+license-files = ["LICENSE"]
+readme = "README.md"
+classifiers = [
+    "Natural Language :: English",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Topic :: Scientific/Engineering",
+    "Typing :: Typed",
+]
+requires-python = ">=3.11"
+dynamic = ["version"]
+
+dependencies = [
+    "numpy>=2",
+    "scipp>=25.11.0",
+]
+
+[project.optional-dependencies]
+test = [
+    "pytest>=7.0",
+]
+
+[project.urls]
+"Bug Tracker" = "https://github.com/scipp/scippneutron_algorithms/issues"
+"Documentation" = "https://scipp.github.io/scippneutron_algorithms"
+"Source" = "https://github.com/scipp/scippneutron_algorithms"
+
+[tool.maturin]
+module-name = "scippneutron_algorithms._scippneutron_algorithms_lib"
+
+[tool.pytest.ini_options]
+minversion = "7.0"
+addopts = """
+--strict-config
+--strict-markers
+--import-mode=importlib
+-ra
+-v
+"""
+testpaths = "tests"
+filterwarnings = [
+    "error",
+    'ignore:You are running a "Debug" build of scipp:',
+]
+
+[tool.ruff]
+line-length = 88
+extend-include = ["*.ipynb"]
+extend-exclude = [
+    ".*", "__pycache__", "build", "dist", "install",
+]
+
+[tool.ruff.lint]
+# See https://docs.astral.sh/ruff/rules/
+select = ["B", "C4", "DTZ", "E", "F", "G", "I", "PERF", "PGH", "PT", "PYI", "RUF", "S", "T20", "UP", "W"]
+ignore = [
+    # Conflict with ruff format, see
+    # https://docs.astral.sh/ruff/formatter/#conflicting-lint-rules
+    "COM812", "COM819", "D206", "D300", "E111", "E114", "E117", "ISC001", "ISC002", "Q000", "Q001", "Q002", "Q003", "W191",
+]
+fixable = ["B010", "I001", "PT001", "RUF022"]
+isort.known-first-party = ["scippneutron_algorithms"]
+pydocstyle.convention = "numpy"
+
+[tool.ruff.lint.per-file-ignores]
+# those files have an increased risk of relying on import order
+"tests/*" = [
+    "S101", # asserts are fine in tests
+    "B018", # 'useless expressions' are ok because some tests just check for exceptions
+]
+
+[tool.mypy]
+strict = true
+ignore_missing_imports = true
+enable_error_code = [
+    "ignore-without-code",
+    "redundant-expr",
+    "truthy-bool",
+]
+warn_unreachable = true
+
+[tool.codespell]
+ignore-words-list = [
+    # Codespell wants "socioeconomic" which seems to be the standard spelling.
+    # But we use the word in our code of conduct which is the contributor covenant.
+    # Let's not modify it if we don't have to.
+    "socio-economic",
+]
+skip = "./.git,*/.virtual_documents,*/.ipynb_checkpoints,*.pdf,*.svg,*.csv"
