@@ -135,7 +135,7 @@ prek = ">=0.4.1"
 ruff = ">=0.15"
 
 [tool.pixi.feature.lint.tasks]
-lint = "prek run --all-files"
+lint = "prek run --all-files && cd rust && cargo clippy -- -Dwarnings"
 
 [tool.pixi.environments]
 default = { features = ["dev", "lint"], solve-group = "default" }
