@@ -25,6 +25,10 @@ on:
         default: ''
         type: string
 
+env:
+  CARGO_TERM_COLOR: "never"
+  PIXI_COLOR: "never"
+
 jobs:
   tests:
     name: Tests ${{ inputs.os-variant }}
