@@ -138,8 +138,8 @@ ruff = ">=0.15"
 lint = "prek run --all-files"
 
 [tool.pixi.environments]
-default = { features = ["dev", "lint"], solve-group = "default" }
-lint = { features = ["lint"], solve-group = "default" }
+default = { features = ["default", "dev", "lint"], solve-group = "default" }
+lint = { features = ["dev", "lint"], solve-group = "default" }
 
 # The install script does not work on Windows.
 # Add a new script if needed.
