@@ -141,8 +141,8 @@ lint = { features = ["dev", "lint"], solve-group = "default" }
 
 # The install script does not work on Windows.
 # Add a new script if needed.
-[tool.pixi.target.linux.activation]
-scripts = ["tools/install_maturin_hook.sh"]
+# [tool.pixi.target.linux.activation]
+# scripts = ["tools/install_maturin_hook.sh"]
 
-[tool.pixi.target.osx.activation]
-scripts = ["tools/install_maturin_hook.sh"]
+# [tool.pixi.target.osx.activation]
+# scripts = ["tools/install_maturin_hook.sh"]
