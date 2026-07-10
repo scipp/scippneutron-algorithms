@@ -5,6 +5,7 @@ build-backend = "maturin"
 [project]
 name = "scippneutron_algorithms"
 description = "Optimized and compile algorithms for ScippNeutron"
+version = "26.7.0"
 authors = [{ name = "Scipp contributors" }]
 license = "BSD-3-Clause"
 license-files = ["LICENSE"]
@@ -21,7 +22,6 @@ classifiers = [
     "Topic :: Scientific/Engineering",
     "Typing :: Typed",
 ]
-dynamic = ["version"]
 requires-python = ">=3.11"
 
 dependencies = [
@@ -46,6 +46,9 @@ python = "3.11.*"
 "Source" = "https://github.com/scipp/scippneutron_algorithms"
 
 [tool.maturin]
+profile = "release"
+editable-profile = "dev"
+manifest-path = "rust/crates/algo_bindings/Cargo.toml"
 module-name = "scippneutron_algorithms._scippneutron_algorithms_lib"
 
 [tool.pytest.ini_options]

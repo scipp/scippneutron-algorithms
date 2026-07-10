@@ -7,6 +7,6 @@ mod _scippneutron_algorithms_lib {
 
     #[pyfunction]
     fn foo() -> i64 {
-        123
+        algo_impl::foo()
     }
 }
