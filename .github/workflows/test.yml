@@ -51,4 +51,4 @@ jobs:
       - name: Set Python version
         run: pixi add "python=${{ inputs.python-version }}"
       - name: Run tests
-        run: pixi run -e dev python -m pytest
+        run: pixi run python -m pytest
