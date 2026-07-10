@@ -15,10 +15,10 @@ try:
         enable_project_importer=True,
         enable_rs_file_importer=False,
         file_searcher=DefaultProjectFileSearcher(
-            source_excluded_dir_names=[
+            source_excluded_dir_names={
                 *DefaultProjectFileSearcher.DEFAULT_SOURCE_EXCLUDED_DIR_NAMES,
                 ".pixi",
-            ]
+            }
         ),
     )
 except Exception as e:

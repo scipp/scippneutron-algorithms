@@ -35,6 +35,7 @@ dev = [
     "maturin_import_hook",
 ]
 test = [
+    "mypy>=1.17",
     "pytest>=7.0",
 ]
 
@@ -126,8 +127,19 @@ scipp = "0m"
 [tool.pixi.pypi-dependencies]
 scippneutron_algorithms = { path = ".", editable = true }
 
+[tool.pixi.feature.dev.tasks]
+typecheck = "python -m mypy ."
+
+[tool.pixi.feature.lint.dependencies]
+prek = ">=0.4.1"
+ruff = ">=0.15"
+
+[tool.pixi.feature.lint.tasks]
+lint = "prek run --all-files"
+
 [tool.pixi.environments]
-default = { features = ["dev"], solve-group = "default" }
+default = { features = ["dev", "lint"], solve-group = "default" }
+lint = { features = ["lint"], solve-group = "default" }
 
 # The install script does not work on Windows.
 # Add a new script if needed.
