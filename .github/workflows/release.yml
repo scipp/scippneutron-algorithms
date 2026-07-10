@@ -9,7 +9,6 @@ on:
         default: true
         type: boolean
         description: "Publish to PyPI"
-  pull_request:  # TODO remove
 
 env:
   CARGO_TERM_COLOR: "never"
