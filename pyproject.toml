@@ -93,6 +93,9 @@ pydocstyle.convention = "numpy"
     "D",  # no need for docstrings in the tests
     "S101", # asserts are fine in tests
 ]
+"tools/*" = [
+    "D",
+]
 
 [tool.mypy]
 strict = true
