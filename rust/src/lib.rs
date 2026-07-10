@@ -6,7 +6,7 @@ mod _scippneutron_algorithms_lib {
     use pyo3::prelude::*;
 
     #[pyfunction]
-    fn foo<'py>(py: Python<'py>) -> i64 {
-        1234
+    fn foo() -> i64 {
+        123
     }
 }

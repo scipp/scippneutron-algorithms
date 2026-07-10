@@ -21,8 +21,8 @@ classifiers = [
     "Topic :: Scientific/Engineering",
     "Typing :: Typed",
 ]
-requires-python = ">=3.11"
 dynamic = ["version"]
+requires-python = ">=3.11"
 
 dependencies = [
     "numpy>=2",
@@ -31,13 +31,15 @@ dependencies = [
 
 [dependency-groups]
 dev = [
+    { include-group = "test" },
     "maturin_import_hook",
 ]
-
-[project.optional-dependencies]
 test = [
     "pytest>=7.0",
 ]
+
+[tool.pixi.dependencies]
+python = "3.11.*"
 
 [project.urls]
 "Bug Tracker" = "https://github.com/scipp/scippneutron_algorithms/issues"
@@ -127,5 +129,10 @@ scippneutron_algorithms = { path = ".", editable = true }
 [tool.pixi.environments]
 default = { features = ["dev"], solve-group = "default" }
 
-[tool.pixi.activation]
+# The install script does not work on Windows.
+# Add a new script if needed.
+[tool.pixi.target.linux.activation]
+scripts = ["tools/install_maturin_hook.sh"]
+
+[tool.pixi.target.osx.activation]
 scripts = ["tools/install_maturin_hook.sh"]
