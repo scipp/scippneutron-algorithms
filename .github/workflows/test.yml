@@ -46,7 +46,8 @@ jobs:
       - uses: prefix-dev/setup-pixi@v0.10.0
         with:
           pixi-version: v0.72.2
-          frozen: true
+          # Install runs below to use the chosen Python version.
+          run-install: false
       - name: Set Python version
         run: pixi add "python=${{ inputs.python-version }}"
       - name: Install environment
