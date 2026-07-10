@@ -1,5 +1,11 @@
 # Custom import hook installation.
-#
+
+# Do not install the hook in CI. We never modify the code in CI
+# and the hook requires additional, non-trivial configuration.
+if [ "$CI" ]; then
+    exit 0
+fi
+
 # Change to this if/when
 # https://github.com/PyO3/maturin-import-hook/issues/29
 # gets fixed:
