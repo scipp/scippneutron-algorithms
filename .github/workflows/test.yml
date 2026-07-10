@@ -47,8 +47,9 @@ jobs:
         with:
           pixi-version: v0.72.2
           frozen: true
-          environments: default
       - name: Set Python version
         run: pixi add "python=${{ inputs.python-version }}"
+      - name: Install environment
+        run: pixi install -e default --frozen
       - name: Run tests
-        run: pixi run python -m pytest
+        run: pixi run --as-is python -m pytest
