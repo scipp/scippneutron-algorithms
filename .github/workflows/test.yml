@@ -51,6 +51,6 @@ jobs:
       - name: Set Python version
         run: pixi add "python=${{ inputs.python-version }}"
       - name: Install environment
-        run: pixi install -e default --frozen
+        run: pixi install -e default --frozen && pixi list -e default
       - name: Run tests
         run: pixi run --as-is python -m pytest
