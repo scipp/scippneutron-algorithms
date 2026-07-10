@@ -32,6 +32,7 @@ dependencies = [
 [dependency-groups]
 dev = [
     { include-group = "test" },
+    "maturin>=1.13,<2.0",  # needed here for the import hook
     "maturin_import_hook",
 ]
 test = [
