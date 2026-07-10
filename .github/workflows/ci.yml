@@ -24,7 +24,7 @@ jobs:
           pixi-version: v0.72.2
           frozen: true
           environments: lint
-      - run: pixi run -e lint lint
+      - run: pixi run lint
 
   type-checking:
     name: Type checking
