@@ -42,6 +42,7 @@ jobs:
         uses: actions-rust-lang/setup-rust-toolchain@v1.17.0
         with:
           cache: false
+          components: cargo, rustc, rust-std
       - uses: prefix-dev/setup-pixi@v0.10.0
         with:
           pixi-version: v0.72.2
