@@ -25,7 +25,7 @@ repos:
                 "--extra-keys 'metadata.language_info.version cell.metadata.jp-MarkdownHeadingCollapsed cell.metadata.pycharm'" ]
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.11.8
+    rev: v0.15.20
     hooks:
       - id: ruff
         args: [ --fix ]
@@ -42,7 +42,7 @@ repos:
           - mdformat-ruff
 
   - repo: https://github.com/codespell-project/codespell
-    rev: v2.4.1
+    rev: v2.4.2
     hooks:
       - id: codespell
         additional_dependencies:
@@ -62,6 +62,6 @@ repos:
       - id: text-unicode-replacement-char
 
   - repo: https://github.com/rhysd/actionlint
-    rev: v1.7.7
+    rev: v1.7.12
     hooks:
       - id: actionlint
