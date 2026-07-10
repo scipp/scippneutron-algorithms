@@ -15,7 +15,7 @@ repos:
         pass_filenames: false
       - id: clippy
         name: clippy
-        entry: cargo clippy
+        entry: cargo clippy -- -Dwarnings
         language: system
         types: [ rust ]
         pass_filenames: false
