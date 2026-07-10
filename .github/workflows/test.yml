@@ -36,6 +36,8 @@ jobs:
           ref: ${{ inputs.checkout-ref }}
       - name: Install Rust
         uses: actions-rust-lang/setup-rust-toolchain@v1.17.0
+        with:
+          cache: false
       - uses: prefix-dev/setup-pixi@v0.10.0
         with:
           pixi-version: v0.72.2
