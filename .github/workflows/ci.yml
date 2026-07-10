@@ -63,10 +63,3 @@ jobs:
     with:
       os-variant: ${{ matrix.os }}
       python-version: ${{ matrix.python }}
-
-  docs:
-    needs: tests
-    permissions:
-      pages: write
-      id-token: write
-    uses: ./.github/workflows/docs.yml
