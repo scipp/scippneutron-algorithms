@@ -9,48 +9,133 @@ on:
         default: true
         type: boolean
         description: "Publish to PyPI"
+  pull_request:  # TODO remove
 
 env:
   CARGO_TERM_COLOR: "never"
   PIXI_COLOR: "never"
 
 jobs:
-  build_wheels:
-    name: Wheels
-    runs-on: ubuntu-24.04
-
+  build_linux:
+    runs-on: ${{ matrix.platform.runner }}
+    strategy:
+      matrix:
+        platform:
+          - runner: ubuntu-22.04
+            target: x86_64
+          - runner: ubuntu-22.04
+            target: aarch64
     steps:
       - uses: actions/checkout@v7
+      - uses: actions/setup-python@v6
         with:
-          fetch-depth: 0  # history required so setuptools_scm can determine version
-
-      - name: Install uv
-        uses: astral-sh/setup-uv@v8.2.0
-      - name: Install Just
-        uses: extractions/setup-just@v4
-
+          python-version-file: '.python-version'
       - name: Build wheels
-        run: just build
-
-      - name: Upload wheels
-        uses: actions/upload-artifact@v4
+        uses: PyO3/maturin-action@v1
         with:
-          name: dist
+          target: ${{ matrix.platform.target }}
+          args: --release --out dist
+          sccache: false
+          manylinux: auto
+      - name: Build free-threaded wheels
+        uses: PyO3/maturin-action@v1
+        with:
+          target: ${{ matrix.platform.target }}
+          args: --release --out dist -i python3.14t
+          sccache: false
+          manylinux: auto
+      - name: Upload wheels
+        uses: actions/upload-artifact@v7
+        with:
+          name: wheels-linux-${{ matrix.platform.target }}
+          path: dist
+
+  build_macos:
+    runs-on: ${{ matrix.platform.runner }}
+    strategy:
+      matrix:
+        platform:
+          - runner: macos-15-intel
+            target: x86_64
+          - runner: macos-latest
+            target: aarch64
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+      - name: Build wheels
+        uses: PyO3/maturin-action@v1
+        with:
+          target: ${{ matrix.platform.target }}
+          args: --release --out dist
+          sccache: false
+      - uses: actions/setup-python@v6
+        with:
+          python-version-file: '.python-version'
+      - name: Build free-threaded wheels
+        uses: PyO3/maturin-action@v1
+        with:
+          target: ${{ matrix.platform.target }}
+          args: --release --out dist -i python3.14t
+          sccache: false
+      - name: Upload wheels
+        uses: actions/upload-artifact@v7
+        with:
+          name: wheels-macos-${{ matrix.platform.target }}
+          path: dist
+
+  build_windows:
+    runs-on: ${{ matrix.platform.runner }}
+    strategy:
+      matrix:
+        platform:
+          - runner: windows-2025
+            target: x64
+            python_arch: x64
+          - runner: windows-11-arm
+            target: aarch64
+            python_arch: arm64
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v6
+        with:
+          python-version-file: '.python-version'
+          architecture: ${{ matrix.platform.python_arch }}
+      - name: Build wheels
+        uses: PyO3/maturin-action@v1
+        with:
+          target: ${{ matrix.platform.target }}
+          args: --release --out dist
+          sccache: false
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.14t"
+          architecture: ${{ matrix.platform.python_arch }}
+      - name: Build free-threaded wheels
+        uses: PyO3/maturin-action@v1
+        with:
+          target: ${{ matrix.platform.target }}
+          args: --release --out dist -i python3.14t
+          sccache: false
+      - name: Upload wheels
+        uses: actions/upload-artifact@v7
+        with:
+          name: wheels-windows-${{ matrix.platform.target }}
           path: dist
 
   upload_packages:
     name: Deploy packages
-    needs: [ build_wheels ]
+    needs: [ build_linux, build_macos, build_windows ]
     runs-on: ubuntu-24.04
     environment:
       name: release
-      url: https://pypi.org/p/scitacean/
+      url: https://pypi.org/p/scippneutron-algorithms/
     permissions:
       id-token: write
-    if: github.event_name == 'release' && github.event.action == 'published'
-
+    if: ${{ (github.event_name == 'release' && github.event.action == 'published') || (github.event_name == 'workflow_dispatch' && inputs.publish) }}
     steps:
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v7
       - uses: pypa/gh-action-pypi-publish@v1.14.0
         with:
           attestations: true
