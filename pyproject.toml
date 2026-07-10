@@ -27,6 +27,7 @@ requires-python = ">=3.11"
 dependencies = [
     "numpy>=2",
     "scipp>=25.11.0",
+    "scipy>=1.7.0",
 ]
 
 [dependency-groups]
