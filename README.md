@@ -9,7 +9,7 @@
 
 Optimized and compile algorithms for ScippNeutron.
 
-> ![Note]
+> [!NOTE]
 > This package should always be used through ScippNeutron and not directly.
 > The functions in `scippneutron_algorithms` are lower level and their interfaces are not as stable.
 
