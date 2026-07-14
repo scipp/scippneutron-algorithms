@@ -5,7 +5,7 @@
 import scipp as sc
 import scipp.constants
 
-from . import _scippneutron_algorithms_lib as lib
+from . import _scippneutron_algorithms_lib as lib  # type: ignore[attr-defined]
 
 
 def compute_single_crystal_norm(
@@ -46,7 +46,7 @@ def compute_single_crystal_norm(
         sc.array(
             dims=["h", "k", "l", "energy_transfer"],
             values=norm_values,
-            unit=sc.Unit("1/meV") / solid_angle.unit,
+            unit=sc.Unit("1/meV") / solid_angle.unit,  # type: ignore[operator]
         ),
         coords=dict(zip(("h", "k", "l", "energy_transfer"), orig_grid, strict=True)),
     )

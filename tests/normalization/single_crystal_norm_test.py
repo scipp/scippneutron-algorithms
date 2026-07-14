@@ -39,7 +39,7 @@ def make_trajectory(
 ) -> Callable[
     [tuple[float, float, float, float], tuple[float, float, float, float]], Trajectory
 ]:
-    return request.param
+    return request.param  # type: ignore[no-any-return]
 
 
 class TrajectoryHelper:
