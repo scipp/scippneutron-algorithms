@@ -1,0 +1,8 @@
+[package]
+name = "algo_impl"
+version = "0.0.0"  # The version is set in pyproject.toml
+edition.workspace = true
+rust-version.workspace = true
+
+[dependencies]
+ndarray = { workspace = true }

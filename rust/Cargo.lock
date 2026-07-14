@@ -4,11 +4,19 @@ version = 4
 
 [[package]]
 name = "_scippneutron_algorithms_lib"
-version = "26.7.0"
+version = "0.0.0"
 dependencies = [
+ "algo_impl",
  "ndarray",
  "numpy",
  "pyo3",
+]
+
+[[package]]
+name = "algo_impl"
+version = "0.0.0"
+dependencies = [
+ "ndarray",
 ]
 
 [[package]]
