@@ -14,6 +14,6 @@ if [[ ! -n "$CI" ]]; then
     # to the default hook installation.
     PYTHON_SITE_CUSTOMIZE="$CONDA_PREFIX"/lib/python$(cat "$PIXI_PROJECT_ROOT"/.python-version)/site-packages/sitecustomize.py
     if [ ! -f "$PYTHON_SITE_CUSTOMIZE" ]; then
-        cp tools/sitecustomize.py "$PYTHON_SITE_CUSTOMIZE"
+        cp tools/devops/sitecustomize.py "$PYTHON_SITE_CUSTOMIZE"
     fi
 fi

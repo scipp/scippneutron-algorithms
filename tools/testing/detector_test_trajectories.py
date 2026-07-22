@@ -1,0 +1,453 @@
+"""Plots of detector trajectories used in single crystal normalization tests.
+
+The unit tests refer to the cases in this file by their label in the plot.
+Each case shows a 2D grid in h (from hkl) and final momentum kf as well as one or
+more detector trajectories as straight lines.
+The extent in kf of the overlap of each trajectory is labeled as a, b, c, etc.
+These values are also present in the tests and used to compute the normalization.
+The 'start', 'stop' labels indicate the directions of trajectories, but tests
+may use the opposite direction as well as that leads to the same result.
+"""
+
+from typing import Any
+
+import matplotlib.pyplot as plt
+import numpy as np
+from matplotlib.axes import Axes
+
+
+def main() -> None:
+    n = len(CASES)
+    _, axs = plt.subplots(
+        int(np.ceil(n / 4)), 4, figsize=(15, 11), layout="constrained"
+    )
+    for ax, case in zip(axs.flatten(), CASES, strict=False):
+        case(ax)
+    plt.show()
+
+
+def case_a(ax: Axes) -> None:
+    """
+    A1: single trajectory (blue)
+    A2: both trajectories (blue + orange)
+    """
+    ax.set_title("A1 / A2")
+    h_min1, h_max1 = 0.1, 0.9
+    mom_min1, mom_max1 = 1.0, 1.5
+    h_min2, h_max2 = 0.5, 0.8
+    mom_min2, mom_max2 = 0.9, 1.4
+
+    h_edges = np.array([-0.1, 0.3, 0.7, 1.0, 1.3])
+    mom_edges = np.array([0.5, 0.9, 1.3, 1.6])
+
+    draw_2d_projection(
+        ax,
+        [[h_min1, mom_min1], [h_min2, mom_min2]],
+        [[h_max1, mom_max1], [h_max2, mom_max2]],
+        h_edges,
+        mom_edges,
+        "$h$",
+        "$k_f$",
+    )
+
+    a1 = 0.125
+    b1 = 0.175
+    c1 = 0.075
+    d1 = 0.125
+
+    a2 = 1 / 3
+    b2 = 2 / 30
+    c2 = 0.1
+
+    yline(ax, 0.3, mom_min1, mom_min1 + a1, "$a_1$")
+    yline(ax, 0.3, 1.3 - b1, 1.3, "$b_1$")
+    yline(ax, 0.3, 1.3, 1.3 + c1, "$c_1$")
+    yline(ax, 0.3, mom_max1 - d1, mom_max1, "$d_1$")
+
+    yline(ax, 1.0, mom_min2, mom_min2 + a2, "$a_2$")
+    yline(ax, 1.0, 1.3 - b2, 1.3, "$b_2$")
+    yline(ax, 1.0, mom_max2 - c2, mom_max2, "$c_2$")
+
+    xline(ax, mom_min1, h_min1, 0.3, None, ls="--", c="gray")
+    xline(ax, mom_max1, 0.3, h_max1, None, ls="--", c="gray")
+    xline(ax, 1.3 + c1, 0.3, 0.7, None, ls="--", c="gray")
+
+    xline(ax, mom_min2, h_min2, 1.0, None, ls="--", c="gray")
+    xline(ax, mom_min2 + a2, 0.7, 1.0, None, ls="--", c="gray")
+    xline(ax, mom_max2, h_max2, 1.0, None, ls="--", c="gray")
+
+
+def case_b(ax: Axes) -> None:
+    ax.set_title("B")
+    h_min, h_max = 1.22, 1.35
+    mom_min, mom_max = 1.1, 0.1
+
+    h_edges = np.array([0.9, 1.0, 1.2, 1.3])
+    mom_edges = np.array([0.0, 0.2, 0.7, 1.0])
+
+    draw_2d_projection(
+        ax,
+        [[h_min, mom_min]],
+        [[h_max, mom_max]],
+        h_edges,
+        mom_edges,
+        "$h$",
+        "$k_f$",
+    )
+
+    a = 0.3
+    b = 0.21538461538461542
+
+    yline(ax, 1.3, 0.7, 0.7 + a, "$a$")
+    yline(ax, 1.3, 0.7 - b, 0.7, "$b$")
+
+
+def case_c(ax: Axes) -> None:
+    ax.set_title("C")
+    h_min, h_max = 1.0, 0.6
+    mom_min, mom_max = 0.9, 0.3
+
+    h_edges = np.array([-0.1, 0.3, 0.7, 1.1, 1.5, 1.9])
+    mom_edges = np.array([0.4, 0.5, 1.0, 1.1])
+
+    draw_2d_projection(
+        ax,
+        [[h_min, mom_min]],
+        [[h_max, mom_max]],
+        h_edges,
+        mom_edges,
+        "$h$",
+        "$k_f$",
+    )
+
+    a = 0.4
+    b = 0.05
+    c = 0.05
+
+    yline(ax, 0.7, mom_min, mom_min - a, "$a$")
+    yline(ax, 0.7, 0.5, 0.5 - b, "$b$")
+    yline(ax, 0.7, 0.4, 0.4 + c, "$c$")
+
+    xline(ax, mom_min, h_min, 0.7, None, ls="--", c="gray")
+
+
+def case_d(ax: Axes) -> None:
+    ax.set_title("D")
+    h_min, h_max = 0.6, 0.4
+    mom_min, mom_max = 1.0, 1.2
+
+    h_edges = np.array([-0.1, 0.3, 0.7, 1.0, 1.3])
+    mom_edges = np.array([0.5, 0.9, 1.3, 1.6])
+
+    draw_2d_projection(
+        ax,
+        [[h_min, mom_min]],
+        [[h_max, mom_max]],
+        h_edges,
+        mom_edges,
+        "$h$",
+        "$k_f$",
+    )
+
+    a = 0.2
+
+    yline(ax, h_min, mom_min, mom_min + a, "$a$")
+    xline(ax, mom_max, h_max, h_min, None, ls="--", c="gray")
+
+
+def case_e(ax: Axes) -> None:
+    ax.set_title("E")
+    h_min, h_max = 0.5, 0.5
+    mom_min, mom_max = 0.6, 1.4
+
+    h_edges = np.array([-0.1, 0.3, 0.7, 1.0, 1.3])
+    mom_edges = np.array([0.5, 0.9, 1.3, 1.6])
+
+    draw_2d_projection(
+        ax,
+        [[h_min, mom_min]],
+        [[h_max, mom_max]],
+        h_edges,
+        mom_edges,
+        "$h$",
+        "$k_f$",
+    )
+
+    a = 0.3
+    b = 0.4
+    c = 0.1
+
+    yline(ax, h_min, mom_min, mom_min + a, "$a$")
+    yline(ax, h_min, 0.9, 0.9 + b, "$b$")
+    yline(ax, h_min, mom_max - c, mom_max, "$c$")
+
+
+def case_f(ax: Axes) -> None:
+    """The trajectory goes exactly from one edge to another."""
+    ax.set_title("F")
+    h_min, h_max = 0.3, 0.8
+    mom_min, mom_max = 0.7, 1.3
+
+    h_edges = np.array([-0.1, 0.3, 0.7, 1.0, 1.3])
+    mom_edges = np.array([0.5, 0.9, 1.3, 1.6])
+
+    draw_2d_projection(
+        ax,
+        [[h_min, mom_min]],
+        [[h_max, mom_max]],
+        h_edges,
+        mom_edges,
+        "$h$",
+        "$k_f$",
+    )
+
+    a = 0.2
+    b = 0.28
+    c = 0.12
+
+    yline(ax, 0.7, mom_min, mom_min + a, "$a$")
+    yline(ax, 0.7, 0.9, 0.9 + b, "$b$")
+    yline(ax, 0.7, 1.3 - c, 1.3, "$c$")
+    xline(ax, mom_min, h_min, 0.7, None, ls="--", c="gray")
+    xline(ax, mom_max, h_max, 0.7, None, ls="--", c="gray")
+
+
+def case_g(ax: Axes) -> None:
+    ax.set_title("G")
+    h_min, h_max = 2.0, 2.0
+    mom_min, mom_max = 0.6, 0.9
+
+    h_edges = np.array([-0.1, 0.3, 0.7, 1.1, 1.5, 1.9])
+    mom_edges = np.array([0.4, 0.5, 1.0, 1.1])
+
+    draw_2d_projection(
+        ax,
+        [[h_min, mom_min]],
+        [[h_max, mom_max]],
+        h_edges,
+        mom_edges,
+        "$h$",
+        "$k_f$",
+    )
+
+
+def case_h(ax: Axes) -> None:
+    ax.set_title("H")
+    h_min, h_max = 0.1, 1.2
+    mom_min, mom_max = 1.2, 1.2
+
+    h_edges = np.array([-0.1, 0.3, 0.7, 1.1, 1.5, 1.9])
+    mom_edges = np.array([0.4, 0.5, 1.0, 1.1])
+
+    draw_2d_projection(
+        ax,
+        [[h_min, mom_min]],
+        [[h_max, mom_max]],
+        h_edges,
+        mom_edges,
+        "$h$",
+        "$k_f$",
+    )
+
+
+def case_i(ax: Axes) -> None:
+    """The trajectory gets close to the grid but stays outside it."""
+    ax.set_title("I")
+    h_min, h_max = -0.4, 0.3
+    mom_min, mom_max = 0.6, 0.1
+
+    h_edges = np.array([-0.1, 0.3, 0.7, 1.1, 1.5, 1.9])
+    mom_edges = np.array([0.4, 0.5, 1.0, 1.1])
+
+    draw_2d_projection(
+        ax,
+        [[h_min, mom_min]],
+        [[h_max, mom_max]],
+        h_edges,
+        mom_edges,
+        "$h$",
+        "$k_f$",
+    )
+
+
+def case_j(ax: Axes) -> None:
+    ax.set_title("J")
+    h_min, h_max = -0.7, 0.3
+    mom_min, mom_max = 0.8, 1.1
+
+    h_edges = np.array([-0.9, -0.5, 0.0, 0.6])
+    mom_edges = np.array([0.6, 1.3])
+
+    draw_2d_projection(
+        ax,
+        [[h_min, mom_min]],
+        [[h_max, mom_max]],
+        h_edges,
+        mom_edges,
+        "$h$",
+        "$k_f$",
+    )
+
+    a = 0.06
+    b = 0.15
+    c = 0.09
+
+    yline(ax, -0.5, mom_min, mom_min + a, "$a$")
+    yline(ax, -0.5, mom_min + a, mom_min + a + b, "$b$")
+    yline(ax, -0.5, mom_max - c, mom_max, "$c$")
+    xline(ax, mom_min, h_min, -0.5, None, ls="--", c="gray")
+    xline(ax, mom_max - c, 0.0, -0.5, None, ls="--", c="gray")
+    xline(ax, mom_max, h_max, -0.5, None, ls="--", c="gray")
+
+
+def case_k(ax: Axes) -> None:
+    ax.set_title("K")
+    h_min, h_max = -0.3, 0.2
+    mom_min, mom_max = 1.4, 0.7
+
+    h_edges = np.array([-0.9, -0.5, 0.0, 0.6])
+    mom_edges = np.array([0.6, 1.3])
+
+    draw_2d_projection(
+        ax,
+        [[h_min, mom_min]],
+        [[h_max, mom_max]],
+        h_edges,
+        mom_edges,
+        "$h$",
+        "$k_f$",
+    )
+
+    a = 0.32
+    b = 0.28
+
+    yline(ax, 0, 1.3, 1.3 - a, "$a$")
+    yline(ax, 0, mom_max, mom_max + b, "$b$")
+    xline(ax, mom_max, h_max, 0, None, ls="--", c="gray")
+
+
+def case_l(ax: Axes) -> None:
+    ax.set_title("L")
+    h_min, h_max = 1.0, 0.4
+    mom_min, mom_max = 1.0, 1.5
+
+    h_edges = np.array([-0.9, -0.5, 0.0, 0.6])
+    mom_edges = np.array([0.6, 1.3])
+
+    draw_2d_projection(
+        ax,
+        [[h_min, mom_min]],
+        [[h_max, mom_max]],
+        h_edges,
+        mom_edges,
+        "$h$",
+        "$k_f$",
+    )
+
+
+def case_m(ax: Axes) -> None:
+    """The trajectory lies exactly on a h-gridline."""
+    ax.set_title("M")
+    h_min, h_max = 0.7, 0.7
+    mom_min, mom_max = 0.7, 1.4
+
+    h_edges = np.array([-0.1, 0.3, 0.7, 1.0, 1.3])
+    mom_edges = np.array([0.5, 0.9, 1.3, 1.6])
+
+    draw_2d_projection(
+        ax,
+        [[h_min, mom_min]],
+        [[h_max, mom_max]],
+        h_edges,
+        mom_edges,
+        "$h$",
+        "$k_f$",
+    )
+
+    a = 0.2
+    b = 0.4
+    c = 0.1
+
+    yline(ax, 0.9, mom_min, mom_min + a, "$a$")
+    yline(ax, 0.9, 0.9, 0.9 + b, "$b$")
+    yline(ax, 0.9, 1.3, 1.3 + c, "$c$")
+
+
+def case_n(ax: Axes) -> None:
+    """The trajectory lies exactly on a k_f-gridline."""
+    ax.set_title("N")
+    h_min, h_max = 0.4, 1.2
+    mom_min, mom_max = 0.9, 0.9
+
+    h_edges = np.array([-0.1, 0.3, 0.7, 1.0, 1.3])
+    mom_edges = np.array([0.5, 0.9, 1.3, 1.6])
+
+    draw_2d_projection(
+        ax,
+        [[h_min, mom_min]],
+        [[h_max, mom_max]],
+        h_edges,
+        mom_edges,
+        "$h$",
+        "$k_f$",
+    )
+
+
+CASES = (
+    case_a,
+    case_b,
+    case_c,
+    case_d,
+    case_e,
+    case_f,
+    case_g,
+    case_h,
+    case_i,
+    case_j,
+    case_k,
+    case_l,
+    case_m,
+    case_n,
+)
+
+
+def xline(
+    ax: Axes, y: float, xmin: float, xmax: float, label: str | None, **kwargs: Any
+) -> None:
+    kwargs.setdefault("c", "k")
+    ax.plot([xmin, xmax], [y, y], **kwargs)
+    if label:
+        ax.text((xmin + xmax) / 2, y, label, ha="center", va="bottom")
+
+
+def yline(ax: Axes, x: float, ymin: float, ymax: float, label: str) -> None:
+    ax.plot([x, x], [ymin, ymax], c="k")
+    ax.text(x, (ymax + ymin) / 2, label, ha="left", va="center")
+
+
+def draw_2d_projection(
+    ax: Axes,
+    start: list[list[float]],
+    stop: list[list[float]],
+    x_edges: np.ndarray,
+    y_edges: np.ndarray,
+    xlabel: str,
+    ylabel: str,
+) -> None:
+    for edge in x_edges:
+        ax.plot([edge, edge], [y_edges[0], y_edges[-1]], c="0.8")
+    for edge in y_edges:
+        ax.plot([x_edges[0], x_edges[-1]], [edge, edge], c="0.8")
+    ax.set_xticks(x_edges)
+    ax.set_yticks(y_edges)
+    ax.set_xlabel(xlabel)
+    ax.set_ylabel(ylabel)
+
+    for a, b in zip(start, stop, strict=True):
+        ax.plot([a[0], b[0]], [a[1], b[1]], marker="o")
+        ax.text(a[0] + 0.02, a[1], "start", ha="left", va="top")
+        ax.text(b[0] + 0.02, b[1], "stop", ha="left", va="top")
+
+
+if __name__ == "__main__":
+    main()

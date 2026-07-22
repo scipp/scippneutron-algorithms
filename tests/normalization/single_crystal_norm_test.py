@@ -113,30 +113,34 @@ def helper(
     return TrajectoryHelper(sc.scalar(request.param, unit="meV"), make_trajectory)
 
 
-# TODO test invariants:
-#    - multi traj: swap trajectories
-#    - shift in grid by multiple of cell length -> norm shifts the same
-#    - extending grid does not impact common bins
-#    - change k,l values (independently)
-#    - traj ending in cell 0 along an axis (coming from bottom right)
-#    - traj ending left of cell 0 (coming from bottom right)
-
-
-# TODO ranges of other hkl (test with single bin)
+@pytest.mark.parametrize(
+    ("k", "k_edge_args", "ik"),
+    [(0.0, (-0.5, 0.5, 4), 1), (0.6, (0.1, 1.3, 7), 2), (-0.2, (-0.7, 0.8, 2), 0)],
+)
+@pytest.mark.parametrize(
+    ("l", "l_edge_args", "il"),
+    [(0.0, (-0.4, 0.4, 4), 1), (0.6, (0.1, 1.3, 7), 2), (-1.1, (-6.5, 3.4, 16), 8)],
+)
 def test_single_crystal_norm_ins_det_traj_within_grid_2d(
     helper: TrajectoryHelper,
+    k: float,
+    k_edge_args: tuple[float, float, int],
+    ik: int,
+    l: float,
+    l_edge_args: tuple[float, float, int],
+    il: int,
 ) -> None:
     """Case A1 from tools/detector_test_trajectories.py
 
     Only the blue trajectory.
     """
     trajectory_start, trajectory_stop = helper.make_trajectory(
-        (0.1, 0.0, 0.0, 1.0), (0.9, 0.0, 0.0, 1.5)
+        (0.1, k, l, 1.0), (0.9, k, l, 1.5)
     )
 
     h_edges = sc.array(dims=["h"], values=[-0.1, 0.3, 0.7, 1.0, 1.3], unit="1/Å")
-    k_edges = sc.linspace("k", -0.5, 0.5, 4, unit="1/Å")
-    l_edges = sc.linspace("l", -0.5, 0.5, 4, unit="1/Å")
+    k_edges = sc.linspace("k", *k_edge_args, unit="1/Å")
+    l_edges = sc.linspace("l", *l_edge_args, unit="1/Å")
     mom_edges = sc.array(
         dims=["energy_transfer"], values=[0.5, 0.9, 1.3, 1.6], unit="1/Å"
     )
@@ -152,10 +156,10 @@ def test_single_crystal_norm_ins_det_traj_within_grid_2d(
 
     a1 = 0.125
     c1 = 0.075
-    cells = [(0, 1, 1, 1), (1, 1, 1, 1), (1, 1, 1, 0), (2, 1, 1, 0)]
+    cells = [(0, ik, il, 1), (1, ik, il, 1), (1, ik, il, 0), (2, ik, il, 0)]
     segments = [1.0, 1.0 + a1, 1.3, 1.3 + c1, 1.5]
     expected = helper.norm_grid(
-        shape=(4, 3, 3, 3),
+        shape=tuple(len(e) - 1 for e in edges),  # type: ignore[arg-type]
         cells=cells,
         segments=segments,
         edges=edges,
@@ -164,15 +168,21 @@ def test_single_crystal_norm_ins_det_traj_within_grid_2d(
     sc.testing.assert_allclose(norm, expected)
 
 
+@pytest.mark.parametrize(
+    "order_traj",
+    [lambda t: (t[0], t[1]), lambda t: (t[1], t[0])],
+    ids=["regular", "swapped"],
+)
 def test_single_crystal_norm_ins_det_traj_within_grid_2d_multi_traj(
     helper: TrajectoryHelper,
+    order_traj: Callable[[Trajectory], Trajectory],
 ) -> None:
     """Case A2 from tools/detector_test_trajectories.py"""
-    trajectory_start1, trajectory_stop1 = helper.make_trajectory(
-        (0.1, 0.0, 0.0, 1.0), (0.9, 0.0, 0.0, 1.5)
+    trajectory_start1, trajectory_stop1 = order_traj(
+        helper.make_trajectory((0.1, 0.0, 0.0, 1.0), (0.9, 0.0, 0.0, 1.5))
     )
-    trajectory_start2, trajectory_stop2 = helper.make_trajectory(
-        (0.5, 0.0, 0.0, 0.9), (0.8, 0.0, 0.0, 1.4)
+    trajectory_start2, trajectory_stop2 = order_traj(
+        helper.make_trajectory((0.5, 0.0, 0.0, 0.9), (0.8, 0.0, 0.0, 1.4))
     )
     trajectory_start = sc.concat([trajectory_start1, trajectory_start2], dim="pixel")
     trajectory_stop = sc.concat([trajectory_stop1, trajectory_stop2], dim="pixel")
@@ -444,17 +454,31 @@ def test_single_crystal_norm_ins_det_traj_outside_grid_multi_cell(
     sc.testing.assert_allclose(norm, expected)
 
 
+@pytest.mark.parametrize(
+    ("k", "k_edge_args", "ik"),
+    [(0.0, (-0.5, 0.5, 4), 1), (0.6, (0.1, 1.3, 7), 2), (-0.2, (-0.7, 0.8, 2), 0)],
+)
+@pytest.mark.parametrize(
+    ("l", "l_edge_args", "il"),
+    [(0.0, (-0.4, 0.4, 4), 1), (0.6, (0.1, 1.3, 7), 2), (-1.1, (-6.5, 3.4, 16), 8)],
+)
 def test_single_crystal_norm_ins_det_traj_outside_grid_diagonal(
     helper: TrajectoryHelper,
+    k: float,
+    k_edge_args: tuple[float, float, int],
+    ik: int,
+    l: float,
+    l_edge_args: tuple[float, float, int],
+    il: int,
 ) -> None:
     """Case I from tools/detector_test_trajectories.py"""
     trajectory_start, trajectory_stop = helper.make_trajectory(
-        (-0.4, 0.0, 0.0, 0.6), (0.3, 0.0, 0.0, 0.1)
+        (-0.4, k, l, 0.6), (0.3, k, l, 0.1)
     )
 
     h_edges = sc.array(dims=["h"], values=[-0.1, 0.3, 0.7, 1.1, 1.5, 1.9], unit="1/Å")
-    k_edges = sc.linspace("k", -0.5, 0.5, 4, unit="1/Å")
-    l_edges = sc.linspace("l", -0.5, 0.5, 4, unit="1/Å")
+    k_edges = sc.linspace("k", *k_edge_args, unit="1/Å")
+    l_edges = sc.linspace("l", *l_edge_args, unit="1/Å")
     mom_edges = sc.array(
         dims=["energy_transfer"], values=[0.4, 0.5, 1.0, 1.1], unit="1/Å"
     )
@@ -468,7 +492,12 @@ def test_single_crystal_norm_ins_det_traj_outside_grid_diagonal(
         incident_energy=helper.incident_energy,
     )
 
-    expected = helper.norm_grid(shape=(5, 3, 3, 3), cells=[], segments=[], edges=edges)
+    expected = helper.norm_grid(
+        shape=tuple(len(e) - 1 for e in edges),  # type: ignore[arg-type]
+        cells=[],
+        segments=[],
+        edges=edges,
+    )
 
     sc.testing.assert_allclose(norm, expected)
 
@@ -563,6 +592,69 @@ def test_single_crystal_norm_ins_det_traj_outside_grid_diagonal_single_kf(
     )
 
     expected = helper.norm_grid(shape=(3, 3, 3, 1), cells=[], segments=[], edges=edges)
+
+    sc.testing.assert_allclose(norm, expected)
+
+
+def test_single_crystal_norm_ins_det_traj_on_h_gridline_grid_2d(
+    helper: TrajectoryHelper,
+) -> None:
+    """Case M from tools/detector_test_trajectories.py"""
+    trajectory_start, trajectory_stop = helper.make_trajectory(
+        (0.7, 0.0, 0.0, 0.7), (0.7, 0.0, 0.0, 1.4)
+    )
+
+    h_edges = sc.array(dims=["h"], values=[-0.1, 0.3, 0.7, 1.0, 1.3], unit="1/Å")
+    k_edges = sc.linspace("k", -0.5, 0.5, 4, unit="1/Å")
+    l_edges = sc.linspace("l", -0.5, 0.5, 4, unit="1/Å")
+    mom_edges = sc.array(
+        dims=["energy_transfer"], values=[0.5, 0.9, 1.3, 1.6], unit="1/Å"
+    )
+    edges = (h_edges, k_edges, l_edges, helper.kf_to_de_sorted(mom_edges))
+
+    norm = compute_single_crystal_norm(
+        trajectory_start=trajectory_start,
+        trajectory_stop=trajectory_stop,
+        solid_angle=sc.array(dims=["pixel"], values=[1.0]),
+        grid=edges,
+        incident_energy=helper.incident_energy,
+    )
+
+    expected = helper.norm_grid(
+        shape=(4, 3, 3, 3),
+        cells=[(2, 1, 1, 2), (2, 1, 1, 1), (2, 1, 1, 0)],
+        segments=[0.7, 0.9, 1.3, 1.4],
+        edges=edges,
+    )
+
+    sc.testing.assert_allclose(norm, expected)
+
+
+def test_single_crystal_norm_ins_det_traj_on_kf_gridline_grid_2d(
+    helper: TrajectoryHelper,
+) -> None:
+    """Case N from tools/detector_test_trajectories.py"""
+    trajectory_start, trajectory_stop = helper.make_trajectory(
+        (0.4, 0.0, 0.0, 0.9), (1.2, 0.0, 0.0, 0.9)
+    )
+
+    h_edges = sc.array(dims=["h"], values=[-0.1, 0.3, 0.7, 1.0, 1.3], unit="1/Å")
+    k_edges = sc.linspace("k", -0.5, 0.5, 4, unit="1/Å")
+    l_edges = sc.linspace("l", -0.5, 0.5, 4, unit="1/Å")
+    mom_edges = sc.array(
+        dims=["energy_transfer"], values=[0.5, 0.9, 1.3, 1.6], unit="1/Å"
+    )
+    edges = (h_edges, k_edges, l_edges, helper.kf_to_de_sorted(mom_edges))
+
+    norm = compute_single_crystal_norm(
+        trajectory_start=trajectory_start,
+        trajectory_stop=trajectory_stop,
+        solid_angle=sc.array(dims=["pixel"], values=[1.0]),
+        grid=edges,
+        incident_energy=helper.incident_energy,
+    )
+
+    expected = helper.norm_grid(shape=(4, 3, 3, 3), cells=[], segments=[], edges=edges)
 
     sc.testing.assert_allclose(norm, expected)
 

@@ -32,6 +32,7 @@ dependencies = [
 
 [dependency-groups]
 dev = [
+    "matplotlib>=3.6",
     "maturin>=1.13,<2.0",  # needed here for the import hook
     "maturin_import_hook",
     "mypy>=1.17",
@@ -150,7 +151,7 @@ lint = { features = ["dev", "lint"], solve-group = "default" }
 # The install script does not work on Windows.
 # Add a new script if needed.
 [tool.pixi.target.linux.activation]
-scripts = ["tools/install_maturin_hook.sh"]
+scripts = ["tools/devops/install_maturin_hook.sh"]
 
 [tool.pixi.target.osx.activation]
-scripts = ["tools/install_maturin_hook.sh"]
+scripts = ["tools/devops/install_maturin_hook.sh"]
