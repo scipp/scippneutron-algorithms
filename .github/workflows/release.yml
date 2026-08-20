@@ -135,6 +135,8 @@ jobs:
     if: ${{ (github.event_name == 'release' && github.event.action == 'published') || (github.event_name == 'workflow_dispatch' && inputs.publish) }}
     steps:
       - uses: actions/download-artifact@v7
+        with:
+          path: dist
       - uses: pypa/gh-action-pypi-publish@v1.14.0
         with:
           attestations: true
