@@ -134,7 +134,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - name: Build sdist
-        uses: PyO3/maturin-action@ve83996d129638aa358a18fbd1dfb82f0b0fb5d3b
+        uses: PyO3/maturin-action@e83996d129638aa358a18fbd1dfb82f0b0fb5d3b
         with:
           command: sdist
           args: --locked --compatibility pypi --out dist
