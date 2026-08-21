@@ -4,7 +4,7 @@ build-backend = "maturin"
 
 [project]
 name = "scippneutron_algorithms"
-description = "Optimized and compile algorithms for ScippNeutron"
+description = "Optimized and compiled algorithms for ScippNeutron"
 version = "26.7.0"
 authors = [{ name = "Scipp contributors" }]
 license = "BSD-3-Clause"
