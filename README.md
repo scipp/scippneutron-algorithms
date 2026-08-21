@@ -7,7 +7,7 @@
 
 ## About
 
-Optimized and compile algorithms for ScippNeutron.
+Optimized and compiled algorithms for ScippNeutron.
 
 > [!NOTE]
 > This package should always be used through ScippNeutron and not directly.
