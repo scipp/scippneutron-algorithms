@@ -15,14 +15,13 @@ classifiers = [
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3 :: Only",
-    "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
     "Programming Language :: Python :: 3.14",
     "Topic :: Scientific/Engineering",
     "Typing :: Typed",
 ]
-requires-python = ">=3.11"
+requires-python = ">=3.12"
 
 dependencies = [
     "numpy>=2",
@@ -40,7 +39,7 @@ dev = [
 ]
 
 [tool.pixi.dependencies]
-python = "3.11.*"
+python = "3.12.*"
 
 [project.urls]
 "Bug Tracker" = "https://github.com/scipp/scippneutron-algorithms/issues"

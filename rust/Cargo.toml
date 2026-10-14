@@ -9,7 +9,7 @@ rust-version = "1.91"
 [workspace.dependencies]
 ndarray = "0.17.2"
 numpy = "0.29"
-pyo3 = { version = "0.29", features = ["abi3", "abi3-py311"] }
+pyo3 = { version = "0.29", features = ["abi3", "abi3-py312"] }
 
 [profile.release]
 codegen-units = 1

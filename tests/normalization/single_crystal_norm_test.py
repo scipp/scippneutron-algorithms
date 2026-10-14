@@ -4,7 +4,7 @@
 
 import itertools
 from collections.abc import Callable
-from typing import Any, TypeAlias
+from typing import Any
 
 import pytest
 import scipp as sc
@@ -18,7 +18,7 @@ def to_trajectory_point(h: float, k: float, l: float, mom: float) -> sc.Variable
     return sc.array(dims=["pixel", "q-e"], values=[[h, k, l, mom]], unit="1/Å")
 
 
-Trajectory: TypeAlias = tuple[sc.Variable, sc.Variable]
+type Trajectory = tuple[sc.Variable, sc.Variable]
 
 
 def traj_as_given(
