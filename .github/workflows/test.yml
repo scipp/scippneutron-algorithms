@@ -45,7 +45,7 @@ jobs:
           components: cargo,rustc,rust-std
       - uses: prefix-dev/setup-pixi@v0.10.0
         with:
-          pixi-version: v0.72.2
+          pixi-version: v0.82.1
           # Install runs below to use the chosen Python version.
           run-install: false
       - name: Set Python version
