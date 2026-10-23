@@ -15,7 +15,20 @@ env:
   PIXI_COLOR: "never"
 
 jobs:
+  check_version:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+      - name: Check version
+        run: |
+          VERSION=$(grep -Po '(?<=^version = ")[^"]*' pyproject.toml)
+          echo "Version from pyproject.toml: $VERSION"
+          if [[ "$VERSION" != "${GITHUB_REF#refs/tags/}" ]]; then
+            echo "Version mismatch: $VERSION != ${GITHUB_REF#refs/tags/}"
+            exit 1
+          fi
   build_linux:
+    needs: check_version
     runs-on: ${{ matrix.platform.runner }}
     strategy:
       matrix:
@@ -52,6 +65,7 @@ jobs:
           path: dist
 
   build_macos:
+    needs: check_version
     runs-on: ${{ matrix.platform.runner }}
     strategy:
       matrix:
@@ -89,6 +103,7 @@ jobs:
           path: dist
 
   build_windows:
+    needs: check_version
     runs-on: ${{ matrix.platform.runner }}
     strategy:
       matrix:
@@ -130,6 +145,7 @@ jobs:
           path: dist
 
   sdist:
+    needs: check_version
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v7
